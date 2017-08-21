@@ -10,7 +10,7 @@
     'use strict';
 
     /**
-     * @param childElement
+     * @param {HTMLElement} childElement
      * @returns {boolean|Element}
      */
     function getParentElementRow(childElement) {
