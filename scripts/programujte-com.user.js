@@ -2,7 +2,9 @@
 // @name         Programujte.com - Odstránenie postrannej reklamy
 // @version      1.0.0
 // @description  Odstraňuje reklamu, ktorá je imúnna voči AdBlocku
-// @author       Dárius Bokor [info@weroro.sk]
+// @author       weroro
+// @updateURL    https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/programujte-com.user.js
+// @downloadURL  https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/programujte-com.user.js
 // @match        http://programujte.com/*
 // @grant        none
 // ==/UserScript==
@@ -54,4 +56,5 @@
     };
 
     (new AdRemover()).init();
+
 })();

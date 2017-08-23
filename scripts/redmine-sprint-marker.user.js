@@ -1,7 +1,10 @@
 // ==UserScript==
-// @name         mark sprint Rows By Name
-// @version      0.1
-// @author       Dajo
+// @name         Mark User Story Rows
+// @version      1.0.0
+// @description  Marks User Story Rows in Redmine Sprint Plugin By Name
+// @author       weroro
+// @updateURL    https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
+// @downloadURL  https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
 // @match        https://redmine.azet.sk/sprints/*
 // @grant        none
 // ==/UserScript==
@@ -11,9 +14,9 @@
 
     /**
      * @param {HTMLElement} childElement
-     * @returns {boolean|Element}
+     * @returns {null|Element}
      */
-    function getParentElementRow(childElement) {
+    var getParentElementRow = function (childElement) {
         /** @type {NodeList} */
         var parentElementRows = document.querySelectorAll('tr.sprint-board');
         /** @type {number} */
@@ -30,17 +33,17 @@
                 }
             }
         }
-        return false;
-    }
+        return null;
+    };
 
     /**
      * @param {string} markSprintRowName
      * @param {string} [customColor]
-     * @returns {boolean}
+     * @returns {void}
      */
-    function markBacklogRowsByName(markSprintRowName, customColor) {
+    var markBacklogRowsByName = function (markSprintRowName, customColor) {
         if (typeof markSprintRowName !== 'string') {
-            return false;
+            return;
         }
         /** @type {string} */
         var parentElementRowBackgroundColor = customColor || 'red';
@@ -54,21 +57,19 @@
             if (userNameElement.innerHTML.toLowerCase().indexOf(markSprintRowName) > -1) {
                 /** @type {boolean|Element} */
                 var parentElementRow = getParentElementRow(userNameElement);
-                if (parentElementRow !== false && parentElementRow.style.background !== parentElementRowBackgroundColor) {
+                if (parentElementRow !== null && parentElementRow.style.background !== parentElementRowBackgroundColor) {
                     parentElementRow.style.background = parentElementRowBackgroundColor;
                 }
             }
         }
-        return true;
-    }
+    };
 
     /** @type {Element} */
     var actualUserNameElement = document.querySelector('#loggedas a');
     if (typeof actualUserNameElement !== 'undefined' && actualUserNameElement !== null) {
         /** @type {string} */
         var actualUserName = actualUserNameElement.innerHTML.toLowerCase();
-        //actualUserName = 'chymo';
-        //actualUserName = 'kurek';
+        /** actualUserName = 'kurek'; */
         markBacklogRowsByName(actualUserName);
     }
 
