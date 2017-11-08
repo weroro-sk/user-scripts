@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mark Sprint board Rows
-// @version      1.2.0
+// @version      1.2.1
 // @description  Marks Sprint board Rows in Redmine Sprint Plugin By Name and priority
 // @author       weroro
 // @updateURL    https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
@@ -145,9 +145,11 @@
          * @param {string} [customUserName]
          */
         this.init = function (customUserName) {
+            clearInterval(window.findAndMarkRowByPriorityInterval);
             self.userName = self.refactorName(self.getUserName(customUserName));
             if (self.userName.length) {
                 findAndMarkRowByPriority();
+                window.findAndMarkRowByPriorityInterval = setInterval(findAndMarkRowByPriority, 15000);
             }
         };
     };

@@ -10,3 +10,5 @@ https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/gitlab-a
 https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/programujte-com.user.js
 
 https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
+
+https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/issue-target-blank.user.js
