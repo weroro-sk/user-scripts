@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mark Sprint board Rows
-// @version      1.1.0
+// @version      1.2.0
 // @description  Marks Sprint board Rows in Redmine Sprint Plugin By Name and priority
 // @author       weroro
 // @updateURL    https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
@@ -40,7 +40,7 @@
         var testUserName = function (sprintRowColumnNameElement) {
             if (typeof sprintRowColumnNameElement !== 'undefined' && sprintRowColumnNameElement !== null) {
                 /** @type {string} */
-                var sprintRowColumnNameElementText = sprintRowColumnNameElement.innerHTML;
+                var sprintRowColumnNameElementText = self.refactorName(sprintRowColumnNameElement.innerHTML);
                 if (sprintRowColumnNameElementText.length && sprintRowColumnNameElementText.toLowerCase().indexOf(self.userName) > -1) {
                     return true;
                 }
@@ -90,6 +90,39 @@
         };
 
         /**
+         * @param {string} inputString
+         * @returns {string}
+         */
+        this.refactorName = function (inputString) {
+            if (typeof inputString !== 'string' || inputString.length < 2) {
+                return '';
+            }
+            /** @type {string} */
+            var oldChars = 'áéíýóúôäščťžňřŕľěĺ';
+            /** @type {string} */
+            var newChars = 'aeiyouoasctznrrlel';
+            inputString = inputString.toLowerCase();
+            /** @type {Array} */
+            var charArray = inputString.split('');
+            /** @type {string} */
+            var outputString = '';
+            /** @type {number} */
+            var index;
+            /** @type {number} */
+            var charIndex = 0;
+            for (; charIndex < charArray.length; charIndex++) {
+                /** @type {Number} */
+                index = oldChars.indexOf(charArray[charIndex]);
+                if (index < 0) {
+                    outputString += inputString.charAt(charIndex);
+                } else {
+                    outputString += newChars.charAt(index);
+                }
+            }
+            return outputString;
+        };
+
+        /**
          * @param {string} [customUserName]
          * @returns {string}
          */
@@ -112,7 +145,7 @@
          * @param {string} [customUserName]
          */
         this.init = function (customUserName) {
-            self.userName = self.getUserName(customUserName);
+            self.userName = self.refactorName(self.getUserName(customUserName));
             if (self.userName.length) {
                 findAndMarkRowByPriority();
             }
