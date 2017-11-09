@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Mark Sprint board Rows
-// @version      1.2.1
+// @version      1.2.2
 // @description  Marks Sprint board Rows in Redmine Sprint Plugin By Name and priority
 // @author       weroro
 // @updateURL    https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
@@ -25,10 +25,13 @@
          * @type {[string,string,string]|Array}
          */
         var colorsByPriority = [
-            '#C8E7FF',
+            '#A4C0D7',
             '#E9B1FF',
             '#9CFFA4'
         ];
+
+        /** @type {number} */
+        var rowsRecheckTime = 5;
 
         /** @type {string} */
         this.userName = '';
@@ -41,7 +44,7 @@
             if (typeof sprintRowColumnNameElement !== 'undefined' && sprintRowColumnNameElement !== null) {
                 /** @type {string} */
                 var sprintRowColumnNameElementText = self.refactorName(sprintRowColumnNameElement.innerHTML);
-                if (sprintRowColumnNameElementText.length && sprintRowColumnNameElementText.toLowerCase().indexOf(self.userName) > -1) {
+                if (sprintRowColumnNameElementText.length && sprintRowColumnNameElementText.indexOf(self.userName) > -1) {
                     return true;
                 }
             }
@@ -51,7 +54,7 @@
         /**
          *
          */
-        var findAndMarkRowByPriority = function () {
+        var findAndMarkRowsByPriority = function () {
             /** @type {NodeList|Array} */
             var sprintRows = document.querySelectorAll('#sprint_board > tr.sprint-board') || [];
             /** @type {number} */
@@ -65,7 +68,7 @@
                 var sprintRowColumns = sprintRow.querySelectorAll(':scope > td') || [];
                 /** @type {number} */
                 var sprintRowColumnIndex = 1;
-                dataLoop:
+                sprintRowColumnsLoopFlag:
                     for (; sprintRowColumnIndex < sprintRowColumns.length; sprintRowColumnIndex++) {
                         /** @type {NodeList|Array} */
                         var sprintRowColumnNameElements = sprintRowColumns[sprintRowColumnIndex].querySelectorAll('a.user') || [];
@@ -78,7 +81,7 @@
                                 if (sprintRowColumnPriority < 1 || sprintRowColumnIndex < sprintRowColumnPriority) {
                                     sprintRowColumnPriority = sprintRowColumnIndex;
                                 }
-                                continue dataLoop;
+                                continue sprintRowColumnsLoopFlag;
                             }
                         }
                     }
@@ -98,64 +101,56 @@
                 return '';
             }
             /** @type {string} */
-            var oldChars = 'áéíýóúôäščťžňřŕľěĺ';
-            /** @type {string} */
-            var newChars = 'aeiyouoasctznrrlel';
-            inputString = inputString.toLowerCase();
+            var lowerCasedInputString = inputString.toLowerCase();
             /** @type {Array} */
-            var charArray = inputString.split('');
+            var charactersArray = lowerCasedInputString.split('');
             /** @type {string} */
             var outputString = '';
             /** @type {number} */
-            var index;
-            /** @type {number} */
             var charIndex = 0;
-            for (; charIndex < charArray.length; charIndex++) {
-                /** @type {Number} */
-                index = oldChars.indexOf(charArray[charIndex]);
-                if (index < 0) {
-                    outputString += inputString.charAt(charIndex);
-                } else {
-                    outputString += newChars.charAt(index);
+            for (; charIndex < charactersArray.length; charIndex++) {
+                /** @type {number} */
+                var characterIndex = 'áéíýóúôäščťžňřŕľěĺ'.indexOf(charactersArray[charIndex]);
+                if (characterIndex < 0) {
+                    outputString += lowerCasedInputString.charAt(charIndex);
+                    continue;
                 }
+                outputString += 'aeiyouoasctznrrlel'.charAt(characterIndex);
             }
             return outputString;
         };
 
         /**
-         * @param {string} [customUserName]
          * @returns {string}
          */
-        this.getUserName = function (customUserName) {
-            /** @type {string} */
-            var actualUserName = customUserName || '';
-            if (typeof actualUserName === 'string' && actualUserName.length > 2) {
-                console.warn('Custom User Name:', customUserName);
-                return actualUserName.toLowerCase();
-            }
+        this.getUserName = function () {
             /** @type {Element} */
-            var actualUserNameElement = document.querySelector('#loggedas a');
+            var actualUserNameElement = document.querySelector('#loggedas a') || null;
             if (!!actualUserNameElement) {
-                actualUserName = actualUserNameElement.innerHTML.toLowerCase();
+                return actualUserNameElement.innerHTML.toLowerCase();
             }
-            return actualUserName;
+            return '';
         };
 
         /**
-         * @param {string} [customUserName]
+         * @param {boolean} [skipSetInterval]
          */
-        this.init = function (customUserName) {
-            clearInterval(window.findAndMarkRowByPriorityInterval);
-            self.userName = self.refactorName(self.getUserName(customUserName));
+        this.init = function (skipSetInterval) {
+            if (skipSetInterval !== true ||
+                typeof window.findAndMarkRowsByPriorityInterval !== 'undefined' &&
+                window.findAndMarkRowsByPriorityInterval !== null) {
+                clearInterval(window.findAndMarkRowsByPriorityInterval);
+            }
+            self.userName = self.refactorName(self.getUserName());
             if (self.userName.length) {
-                findAndMarkRowByPriority();
-                window.findAndMarkRowByPriorityInterval = setInterval(findAndMarkRowByPriority, 15000);
+                findAndMarkRowsByPriority();
+                if (skipSetInterval !== true) {
+                    window.findAndMarkRowsByPriorityInterval = setInterval(findAndMarkRowsByPriority, rowsRecheckTime * 1000);
+                }
             }
         };
     };
 
-    /**
-     *
-     */
+    /** @type SprintBoardRowsMarker */
     (new SprintBoardRowsMarker()).init();
 })();
