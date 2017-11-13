@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Mark Sprint board Rows
-// @version      1.2.2
+// @version      1.2.3
 // @description  Marks Sprint board Rows in Redmine Sprint Plugin By Name and priority
 // @author       weroro
 // @updateURL    https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
 // @downloadURL  https://raw.githubusercontent.com/weroro-sk/user-scripts/master/scripts/redmine-sprint-marker.user.js
 // @match        https://redmine.azet.sk/sprints/*
+// @match        http://redmine.azet.sk/sprints/*
 // @grant        none
 // ==/UserScript==
 
